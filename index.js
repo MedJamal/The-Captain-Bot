@@ -1,6 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const express = require('express');
+const api = express();
+
+const bodyParser = require('body-parser');
+api.use(bodyParser.json());
+
 client.config = require('./src/config.json');
 
 client.on('ready', () => {
@@ -39,7 +45,7 @@ messagesEvent = (msg) => {
         });
     } else if (commade === 'hello') {
         msg.reply('Hello');
-    } else if (msg.content.startsWith('!say, ')){      
+    } else if (msg.content.startsWith('!say, ')){
         toSay = msg.content.replace('!say,', '');
         msg.channel.send(toSay);
     } else if(commade.startsWith('metar')){
@@ -66,6 +72,28 @@ messagesEvent = (msg) => {
 }
 
 client.on('message', messagesEvent);
+
+api.get('/', function(req, res){
+    const channel = client.channels.find('name', 'general');
+    channel.send(`Hello i'm on`);
+    return;
+});
+
+api.post('/send', function (req, res) {
+    console.log(req.body.message);
+
+    // Get channel object
+    const channel = client.channels.find('name', 'general');
+
+    // Send message to the channel
+    channel.send(`${req.body.message}`);
+
+    // Send response to the client request with status 200
+    res.status(200).send('message send successfully');
+});
+ 
+api.listen(3000);
+
 
 client.login(client.config.token);
 
