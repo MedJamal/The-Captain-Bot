@@ -80,10 +80,19 @@ api.get('/', function(req, res){
 });
 
 api.post('/send', function (req, res) {
-    console.log(req.body.message);
+    // console.log(req.body.message);
 
     // Get channel object
-    const channel = client.channels.find('name', 'general');
+    let channel;
+    try {
+        channel = client.guilds.find('name', req.body.guild).channels.find('name', req.body.channel);
+    } catch (error) {
+        console.log('err', error);
+    }
+
+    // const channel = client.channels.find('name', req.body.channel);
+    // let channel = client.guilds.find('name', req.body.guild).channels.find('name', req.body.channel);
+    if (!channel) return res.status(404).send('Server or channel not found!');
 
     // Send message to the channel
     channel.send(`${req.body.message}`);
@@ -92,8 +101,7 @@ api.post('/send', function (req, res) {
     res.status(200).send('message send successfully');
 });
  
-api.listen(3000);
-
+api.listen(5000);
 
 client.login(client.config.token);
 
