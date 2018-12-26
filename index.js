@@ -80,7 +80,7 @@ api.get('/', function(req, res){
 });
 
 api.post('/send', function (req, res) {
-    // console.log(req.body.message);
+    console.log(req.body);
 
     // Get channel object
     let channel;
